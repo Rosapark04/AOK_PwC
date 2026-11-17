@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Impact Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="brand">
+            <svg class="leaf-icon" viewBox="0 0 24 24" fill="none" stroke="#478C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
+            <span>Food Impact Simulator</span>
+        </div>
+        <div class="nav-actions">
+            <!-- Language Dropdown Container -->
+            <div class="lang-dropdown-container">
+                <button class="lang-btn" id="langToggle" title="Sprache wechseln / Switch Language">
+                    <span id="langFlag" class="flag-icon">
+                        <!-- Default German Flag SVG -->
+                        <svg viewBox="0 0 5 3" width="20" height="14">
+                            <rect width="5" height="3" y="0" fill="#000"/>
+                            <rect width="5" height="2" y="1" fill="#D00"/>
+                            <rect width="5" height="1" y="2" fill="#FFCE00"/>
+                        </svg>
+                    </span>
+                    <span id="langText">DE</span>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                </button>
+
+                <!-- Pop-down Language Selection Menu -->
+                <div class="lang-menu" id="langMenu">
+                    <div class="lang-menu-grid">
+                        <div class="lang-option" data-lang="de">
+                            <span class="flag-icon">
+                                <svg viewBox="0 0 5 3" width="18" height="12">
+                                    <rect width="5" height="3" y="0" fill="#000"/>
+                                    <rect width="5" height="2" y="1" fill="#D00"/>
+                                    <rect width="5" height="1" y="2" fill="#FFCE00"/>
+                                </svg>
+                            </span>
+                            <span>Deutsch (DE)</span>
+                        </div>
+                        <div class="lang-option" data-lang="en">
+                            <span class="flag-icon">
+                                <svg viewBox="0 0 60 30" width="18" height="12">
+                                    <clipPath id="ukClip2"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+                                    <g clip-path="url(#ukClip2)">
+                                        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+                                        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+                                        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/>
+                                        <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+                                        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+                                    </g>
+                                </svg>
+                            </span>
+                            <span>English (EN)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Profile Button -->
+            <button class="icon-btn" id="userProfileBtn" title="Profile">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="10" r="3"/>
+                    <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Filter Sidebar -->
+        <aside class="sidebar">
+            <h2 data-i18n="filterTitle">Filter</h2>
+
+            <!-- Cost Filter -->
+            <div class="filter-group">
+                <label class="group-title" data-i18n="costLabel">Kosten (€)</label>
+                <div class="price-inputs">
+                    <input type="number" id="minPriceInput" placeholder="Min" min="0" max="15" step="0.5" value="2">
+                    <input type="number" id="maxPriceInput" placeholder="Max" min="0" max="15" step="0.5" value="10">
+                </div>
+                <div class="range-slider">
+                    <div class="slider-track"></div>
+                    <div class="slider-range" id="sliderRange"></div>
+                    <input type="range" id="minRange" min="0" max="15" step="0.5" value="2">
+                    <input type="range" id="maxRange" min="0" max="15" step="0.5" value="10">
+                </div>
+            </div>
+
+            <!-- CO2 Emissions Filter -->
+            <div class="filter-group">
+                <label class="group-title" data-i18n="co2Label">CO₂-Emissionen</label>
+                <div class="pill-group" id="co2Group">
+                    <button type="button" class="pill active" data-value="niedrig" data-i18n="co2Low">Niedrig</button>
+                    <button type="button" class="pill" data-value="mittel" data-i18n="co2Med">Mittel</button>
+                    <button type="button" class="pill" data-value="hoch" data-i18n="co2High">Hoch</button>
+                </div>
+            </div>
+
+            <!-- Food Category Multi-select -->
+            <div class="filter-group">
+                <label class="group-title" data-i18n="catLabel">Lebensmittelkategorie</label>
+                <div class="checkbox-list" id="categoryList">
+                    <label class="checkbox-item"><input type="checkbox" value="Obst"><span data-i18n="catFruit">Obst</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="Gemüse"><span data-i18n="catVeg">Gemüse</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="Fleisch"><span data-i18n="catMeat">Fleisch</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="Getreide"><span data-i18n="catGrain">Getreide</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="Nüsse"><span data-i18n="catNuts">Nüsse</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="Getränke"><span data-i18n="catDrinks">Getränke</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="Milchprodukte"><span data-i18n="catDairy">Milchprodukte</span></label>
+                </div>
+            </div>
+
+            <button type="button" class="btn-submit" id="applyFilterBtn" data-i18n="showRecipes">Rezepte anzeigen</button>
+        </aside>
+
+        <!-- Right Recipe Content -->
+        <main class="main-content">
+            <h2 data-i18n="recipesTitle">Rezeptvorschläge</h2>
+
+            <!-- Main Recommendation Card -->
+            <section class="hero-card" id="heroCard">
+                <div class="hero-img-wrapper">
+                    <img id="heroImg" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1000&q=80" alt="Gemüse-Reis-Bowl">
+                </div>
+                <div class="hero-info">
+                    <span class="badge" data-i18n="mainBadge">HAUPTVORSCHLAG</span>
+                    <h3 id="heroTitle">Gemüse-Reis-Bowl</h3>
+                    <p class="meta" id="heroMeta">3,80 € · CO₂ niedrig</p>
+                </div>
+            </section>
+
+            <!-- Alternative Recipes Grid -->
+            <section class="alternatives-section">
+                <h3 data-i18n="altTitle">Alternativen</h3>
+                <div class="alternatives-grid" id="alternativesGrid">
+                    <!-- Dynamically rendered -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- User Profile Settings Modal (Center Pop-out) -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="10" r="3"/>
+                        <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+                    </svg>
+                    <span data-i18n="modalTitle">Benutzerprofil(Krankenhauspersonal)</span>
+                </div>
+                <button type="button" class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+
+            <form id="profileForm" class="modal-body">
+                <!-- Personal Information -->
+                <div class="form-section">
+                    <h4 data-i18n="personalInfo">Persönliche Angaben</h4>
+                    <div class="form-grid-2">
+                        <div class="form-field">
+                            <label data-i18n="usernameLabel">Benutzername</label>
+                            <input type="text" id="profUsername" value="m.mueller">
+                        </div>
+                        <div class="form-field">
+                            <label data-i18n="nameLabel">Name</label>
+                            <input type="text" id="profName" value="Max Müller">
+                        </div>
+                        <div class="form-field">
+                            <label data-i18n="emailLabel">E-Mail-Adresse</label>
+                            <input type="email" id="profEmail" value="max@hospital.de">
+                        </div>
+                        <div class="form-field">
+                            <label data-i18n="langLabel">Sprache</label>
+                            <select id="profLang">
+                                <option value="de" selected>Deutsch</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <!-- Professional Information -->
+                <div class="form-section">
+                    <h4 data-i18n="workInfo">Berufliche Angaben</h4>
+                    <div class="form-field">
+                        <label data-i18n="roleLabel">Benutzerrolle</label>
+                        <input type="text" id="profRole" value="Krankenhauspersonal" readonly class="readonly-input">
+                    </div>
+                    <div class="form-field">
+                        <label data-i18n="deptLabel">Abteilung</label>
+                        <select id="profDept">
+                            <option value="kueche" selected data-i18n="deptKitchen">Küche / Verpflegungsmanagement</option>
+                            <option value="pflege" data-i18n="deptNursing">Pflegedienst</option>
+                            <option value="verwaltung" data-i18n="deptAdmin">Verwaltung</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label data-i18n="stationLabel">Standort / Station</label>
+                        <input type="text" id="profStation" placeholder="z. B. Standort A">
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <!-- Settings -->
+                <div class="form-section">
+                    <h4 data-i18n="settingsTitle">Einstellungen</h4>
+                    <label class="toggle-check">
+                        <input type="checkbox" id="optNotify" checked>
+                        <span data-i18n="notifyOpt">Benachrichtigungen aktivieren</span>
+                    </label>
+                    <label class="toggle-check">
+                        <input type="checkbox" id="optSaveFilter" checked>
+                        <span data-i18n="saveFilterOpt">Filtereinstellungen speichern</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-save-dark" data-i18n="saveBtn">Änderungen speichern</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Feature Scripts -->
+    <script src="script.js"></script>
+
+    <!-- Feature Scripts Seperate -->
+    <!--<script src="data/recipes.js"></script>
+    <script src="data/languages.js"></script>*
+    <script src="js/filter.js"></script>
+    <script src="js/bookmark.js"></script>
+    <script src="js/core.js"></script> -->
+</body>
+</html>
+</body>
+</html>
